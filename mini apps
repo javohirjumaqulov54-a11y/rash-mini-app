@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rasch Model Mini App</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #e3f2fd, #90caf9);
+      color: #0d47a1;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      margin-top: 50px;
+      width: 90%;
+      max-width: 480px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+      color: #1565c0;
+    }
+
+    .question {
+      margin: 12px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    button {
+      background-color: #1565c0;
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background-color: #0d47a1;
+    }
+
+    .result {
+      margin-top: 20px;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .footer {
+      margin-top: 30px;
+      font-size: 13px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📊 Rasch Model Baholash</h1>
+    <p>Har bir savolga javobni belgilang:</p>
+
+    <div id="questions"></div>
+
+    <button onclick="calculateResult()">✅ Natijani hisoblash</button>
+    <div id="result" class="result"></div>
+
+    <div class="footer">© 2025 Rasch Model Mini App</div>
+  </div>
+
+  <script>
+    const totalQuestions = 10;
+    const questionsDiv = document.getElementById("questions");
+
+    let answers = Array(totalQuestions).fill(null);
+
+    for (let i = 0; i < totalQuestions; i++) {
+      const div = document.createElement("div");
+      div.className = "question";
+      div.innerHTML = `
+        <span>${i + 1}-savol</span>
+        <div>
+          <button onclick="setAnswer(${i}, 1)">To‘g‘ri</button>
+          <button onclick="setAnswer(${i}, 0)">Noto‘g‘ri</button>
+        </div>
+      `;
+      questionsDiv.appendChild(div);
+    }
+
+    function setAnswer(index, value) {
+      answers[index] = value;
+    }
+
+    function calculateResult() {
+      if (answers.includes(null)) {
+        alert("Iltimos, barcha savollarga javob bering!");
+        return;
+      }
+
+      const sum = answers.reduce((a, b) => a + b, 0);
+      const p = sum / totalQuestions;
+
+      // Rasch modeli bo‘yicha taxminiy theta (logit shaklida)
+      const theta = Math.log(p / (1 - p));
+
+      let level = "";
+      if (theta < -0.5) level = "Past daraja";
+      else if (theta < 0.5) level = "O‘rta daraja";
+      else level = "Yuqori daraja";
+
+      document.getElementById("result").innerHTML = `
+        <p>📈 Qobiliyat (θ): <b>${theta.toFixed(2)}</b></p>
+        <p>⭐ Baholash: <b>${level}</b></p>
+      `;
+    }
+  </script>
+</body>
+</html>
